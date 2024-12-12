@@ -1,0 +1,16 @@
+server:
+  port: 8080
+
+spring:
+  main:
+    web-application-type: reactive
+
+feign:
+  httpclient:
+    enabled: true
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
