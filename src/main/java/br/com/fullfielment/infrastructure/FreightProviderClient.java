@@ -4,34 +4,34 @@ import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-/**
- * Exemplo de client Feign para um serviço externo de frete.
- * Ajustar URL, path e parâmetros conforme necessário.
- */
-
-@FeignClient(name = "freightProviderClient", url = "https://freight-provider.com/api", configuration = FreightProviderConfig.class)
+// Mock do Provider externo.
+// Ajuste conforme necessário para simular retorno de preço e estoque.
+@FeignClient(name = "freightProviderClient", url = "http://localhost:8081")
 public interface FreightProviderClient {
 
     @GetMapping("/calculate")
-    FreightProviderResponse getFreightOptions(@RequestParam("postalCode") String postalCode,
-                                              @RequestParam("weight") Double weight);
+    ProviderResponse getPriceAndStock(@RequestParam("sku") String sku,
+                                      @RequestParam("quantity") Integer quantity,
+                                      @RequestParam(value="postalCode", required=false) String postalCode,
+                                      @RequestParam(value="country", required=false) String country);
 
-    // Classe interna ou externa representando a resposta do provider
-    class FreightProviderResponse {
-        // Defina os campos conforme a resposta do provider
-        private String id;
-        private String name;
-        private Double price;
-        private Integer deliveryTime;
+    class ProviderResponse {
+        private String sku;
+        private Integer availableStock; // estoque disponível
+        private Integer price;          // preço em centavos
+        private Integer deliveryPrice;  // preço do frete em centavos (se postalCode e country informados)
+        private Integer deliveryTimeDays; // dias de entrega estimados (se aplicável)
 
-        // getters e setters
-        public String getId() { return id; }
-        public void setId(String id) {this.id = id;}
-        public String getName() {return name;}
-        public void setName(String name) {this.name = name;}
-        public Double getPrice() {return price;}
-        public void setPrice(Double price) {this.price = price;}
-        public Integer getDeliveryTime() {return deliveryTime;}
-        public void setDeliveryTime(Integer deliveryTime) {this.deliveryTime = deliveryTime;}
+        // getters & setters
+        public String getSku() {return sku;}
+        public void setSku(String sku) {this.sku = sku;}
+        public Integer getAvailableStock() {return availableStock;}
+        public void setAvailableStock(Integer availableStock) {this.availableStock = availableStock;}
+        public Integer getPrice() {return price;}
+        public void setPrice(Integer price) {this.price = price;}
+        public Integer getDeliveryPrice() {return deliveryPrice;}
+        public void setDeliveryPrice(Integer deliveryPrice) {this.deliveryPrice = deliveryPrice;}
+        public Integer getDeliveryTimeDays() {return deliveryTimeDays;}
+        public void setDeliveryTimeDays(Integer deliveryTimeDays) {this.deliveryTimeDays = deliveryTimeDays;}
     }
 }

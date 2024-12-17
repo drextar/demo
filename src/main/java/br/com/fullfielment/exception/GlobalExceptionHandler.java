@@ -9,22 +9,13 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(CustomException.class)
     public Mono<ErrorResponse> handleCustomException(CustomException e) {
-        return Mono.just(new ErrorResponse("ERROR", e.getMessage()))
-                .defaultIfEmpty(new ErrorResponse("ERROR", "Unknown error"));
+        return Mono.just(new ErrorResponse("ERROR", e.getMessage()));
     }
 
-    static class ErrorResponse {
-        private String code;
-        private String message;
-        public ErrorResponse(String code, String message) {
-            this.code = code;
-            this.message = message;
-        }
-        public String getCode() {
-            return code;
-        }
-        public String getMessage() {
-            return message;
-        }
+    @ExceptionHandler(Exception.class)
+    public Mono<ErrorResponse> handleGenericException(Exception e) {
+        return Mono.just(new ErrorResponse("ERROR", "Unexpected error: " + e.getMessage()));
     }
+
+    record ErrorResponse(String code, String message){}
 }
